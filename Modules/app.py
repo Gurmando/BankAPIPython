@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_mysqldb import MySQL
-from sqlalchemy import create_engine, Column, Integer, String, Float
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine, Column, Integer, String, Float, ForeignKey
+from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
 
 app = Flask(__name__)
@@ -13,7 +13,7 @@ app.config['MYSQL_DB'] = 'PythonBank'
 
 mysql = MySQL(app)
 
-engine = create_engine('mysql+pymysql://root:Gman1234!@localhost/PythonBank?charset=utf8mb4', echo=True)
+engine = create_engine('mysql+pymysql://root:Gman1234!@localhost/pythonbank?charset=utf8mb4', echo=True)
 Session = sessionmaker(bind=engine)
 Base = declarative_base()
 
@@ -39,10 +39,12 @@ class Account(Base):
     __tablename__ = 'accounts'
 
     id = Column(Integer, primary_key=True)
-    account_type = Column(String(50), nullable=False)
+    type = Column(String(50), nullable=False)
     nickname = Column(String(50), nullable=False)
     rewards = Column(Integer)
     balance = Column(Float, nullable=False)
+    customer_id = Column(Integer, ForeignKey('customers.id'))
+    customer = relationship('Customer', backref='accounts')
 
     def to_dict(self):
         return {
@@ -51,6 +53,62 @@ class Account(Base):
             'nickname': self.nickname,
             'rewards': self.rewards,
             'balance': self.balance
+        }
+
+
+class Deposit(Base):
+    __tablename__ = 'deposits'
+
+    id = Column(Integer, primary_key=True)
+    type = Column(String(50))
+    transaction_date = Column(String(50))
+    status = Column(String(50))
+    payee_id = Column(Integer)
+    medium = Column(String(50), nullable=False)
+    amount = Column(Float)
+    description = Column(String(50))
+    account_id = Column(Integer, ForeignKey('accounts.id'))
+    account = relationship('Account', backref='deposits')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'type': self.type,
+            'transaction_date': self.transaction_date,
+            'status': self.status,
+            'payee_id': self.payee_id,
+            'medium': self.medium,
+            'amount': self.amount,
+            'description': self.description,
+            'account_id': self.account_id
+        }
+
+
+class Withdrawal(Base):
+    __tablename__ = 'withdrawal'
+
+    id = Column(Integer, primary_key=True)
+    type = Column(String(50))
+    transaction_date = Column(String(50))
+    status = Column(String(50))
+    payee_id = Column(Integer)
+    medium = Column(String(50), nullable=False)
+    amount = Column(Float)
+    description = Column(String(50))
+    account_id = Column(Integer, ForeignKey('accounts.id'))
+    account = relationship('Account', backref='deposits')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'type': self.type,
+            'transaction_date': self.transaction_date,
+            'status': self.status,
+            'payee_id': self.payee_id,
+            'medium': self.medium,
+            'amount': self.amount,
+            'description': self.description,
+            'account_id': self.account_id
         }
 
 
