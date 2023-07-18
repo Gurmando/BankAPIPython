@@ -8,12 +8,12 @@ app = Flask(__name__)
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_PORT'] = 3306
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = '!'
+app.config['MYSQL_PASSWORD'] = 'Gman1234!'
 app.config['MYSQL_DB'] = 'PythonBank'
 
 mysql = MySQL(app)
 
-engine = create_engine('mysql+pymysql://root:----@localhost/PythonBank?charset=utf8mb4', echo=True)
+engine = create_engine('mysql+pymysql://root:Gman1234!@localhost/PythonBank?charset=utf8mb4', echo=True)
 Session = sessionmaker(bind=engine)
 Base = declarative_base()
 
