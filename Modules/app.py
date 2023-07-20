@@ -49,7 +49,7 @@ class Account(Base):
     def to_dict(self):
         return {
             'id': self.id,
-            'account_type': self.account_type,
+             'account_type': self.account_type,
             'nickname': self.nickname,
             'rewards': self.rewards,
             'balance': self.balance
