@@ -1,3 +1,4 @@
+
 from flask import Flask, jsonify, request
 from flask_mysqldb import MySQL
 from sqlalchemy import create_engine, Column, Integer, String, Float, ForeignKey
@@ -143,3 +144,4 @@ def add_customers():
 if __name__ == "__main__":
     Base.metadata.create_all(engine)
     app.run(host='localhost', port=5000)
+
