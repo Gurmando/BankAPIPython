@@ -9,9 +9,9 @@ class Customer:
 def get_all_customers():
 
     customers = [
-        {"id": 1, "first_name": "John", "last_name": "Doe", "address": "123 Main St"},
-        {"id": 2, "first_name": "Jane", "last_name": "Smith", "address": "456 Elm St"},
-        {"id": 3, "first_name": "Bob", "last_name": "Johnson", "address": "789 Oak St"}
+        {"id": 1, "first_name": "Darus", "last_name": "Slah", "address": "123 Main St"},
+        {"id": 2, "first_name": "Gurmanjot", "last_name": "Singh", "address": "123 Main St"},
+        {"id": 3, "first_name": "Amine", "last_name": "Mohammed", "address": "123 Main St"}
     ]
 
     return customers
