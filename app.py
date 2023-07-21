@@ -1,6 +1,11 @@
 from werkzeug.wrappers import Request, Response
 from flask import Flask, jsonify
 
+#working on learning import statements and modules
+import Account
+import Customer
+import Address
+
 app = Flask(__name__)
 
 @app.route('/person/')
@@ -15,3 +20,4 @@ if __name__ == "__mainapi__":
 def hello():
     return jsonify({'name': 'Jimit',
                     'address': 'India'})
+
