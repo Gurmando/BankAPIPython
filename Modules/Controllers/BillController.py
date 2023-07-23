@@ -31,7 +31,7 @@ def delete_bill(id):
 @app.route('/bills/<id>', methods=['PUT'])
 def update_bill(id):
     data = request.get_json()
-    bill_repo = BillRepo(session) 
+    bill_repo = BillRepo(session)
     bill_service = BillService(bill_repo)
     updated_bill = bill_service.update_bill(id, data.get('payee'), data.get('bill_status'), data.get('nick_name'),
                                             data.get('payment_amount'))
