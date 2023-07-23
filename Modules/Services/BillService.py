@@ -1,3 +1,8 @@
+from typing import Any
+
+from Modules.POJOs.Bill import Bill
+
+
 class BillService:
 
     def __init__(self, bill_repo):
