@@ -6,4 +6,3 @@ class Account:
         self.rewards = int(rewards)
         self.balance = float(balance)
         self.customer = customer
-
