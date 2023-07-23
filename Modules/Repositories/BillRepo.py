@@ -1,3 +1,6 @@
+from Modules.POJOs import Bill
+
+
 class BillRepo:
     def __init__(self, session):
         self.session = session
