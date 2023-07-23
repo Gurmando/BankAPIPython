@@ -1,4 +1,4 @@
-from importlib.resources import Resource
+
 
 from flask import Flask, jsonify, request
 from flask_mysqldb import MySQL
@@ -54,7 +54,7 @@ class Account(Base):
     def to_dict(self):
         return {
             'id': self.id,
-            'account_type': self.account_type,
+             'account_type': self.account_type,
             'nickname': self.nickname,
             'rewards': self.rewards,
             'balance': self.balance
@@ -88,68 +88,7 @@ class Deposit:
         self.account = account
 
 
-# Utility function to convert Enums to strings
-def enum_to_str(enum_val):
-    return enum_val.value if enum_val else None
-
-
-class DepositController(Resource):
-    def get(self, deposit_id):
-        if deposit_id in deposits:
-            deposit = deposits[deposit_id]
-            return deposit, 200
-        else:
-            return {"message": f"Deposit with ID #{deposit_id} not found"}, 404
-
-    def post(self):
-        data = request.get_json()
-        # Perform validation on the data received in the request
-        # For example, check if all required fields are present
-        if not data.get('amount') or not data.get('description'):
-            return {"message": "Amount and description are required fields"}, 400
-
-        global next_deposit_id
-        deposit_id = next_deposit_id
-        next_deposit_id += 1
-
-        new_deposit = {
-            'id': deposit_id,
-            'amount': data['amount'],
-            'description': data['description']
-            # Add other fields as needed
-        }
-
-        deposits[deposit_id] = new_deposit
-        return new_deposit, 201
-
-    def put(self, deposit_id):
-        if deposit_id in deposits:
-            data = request.get_json()
-            # Perform validation on the data received in the request
-            # For example, check if all required fields are present
-            if not data.get('amount') or not data.get('description'):
-                return {"message": "Amount and description are required fields"}, 400
-
-            deposit = deposits[deposit_id]
-            deposit['amount'] = data['amount']
-            deposit['description'] = data['description']
-            # Update other fields as needed
-
-            deposits[deposit_id] = deposit
-            return deposit, 200
-        else:
-            return {"message": f"Deposit with ID #{deposit_id} not found"}, 404
-
-    def delete(self, deposit_id):
-        if deposit_id in deposits:
-            del deposits[deposit_id]
-            return "", 204  # No content
-        else:
-            return {"message": f"Deposit with ID #{deposit_id} not found"}, 404
-
-
-api.add_resource(DepositController, '/accounts/<int:accountId>/deposits', '/deposits/<int:depositId>')
-
 if __name__ == "__main__":
     Base.metadata.create_all(engine)
     app.run(host='localhost', port=5000)
+
