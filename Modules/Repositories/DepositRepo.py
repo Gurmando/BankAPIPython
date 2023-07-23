@@ -1,3 +1,6 @@
+from Modules.app import Deposit
+
+
 class DepositRepo:
     def __init__(self, session):
         self.session = session

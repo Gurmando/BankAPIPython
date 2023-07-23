@@ -1,3 +1,5 @@
+from Modules.Exceptions import ResourceNotFoundException
+
 class DepositService:
     def __init__(self, deposit_repo, account_repo):
         self.deposit_repo = deposit_repo
@@ -7,7 +9,7 @@ class DepositService:
         account = self.account_repo.find_by_id(account_id)
 
         if not account:
-            raise ResourceNotFoundException(f"The account with id {account_id} does not exist :(")
+            raise ResourceNotFoundException
 
         account.balance += deposit_to_be_created.amount
         self.account_repo.save(account)
@@ -24,7 +26,7 @@ class DepositService:
         original_deposit = self.deposit_repo.find_by_id(deposit_id)
 
         if not original_deposit:
-            raise ResourceNotFoundException(f"The original deposit with id {deposit_id} does not exist :(")
+            raise ResourceNotFoundException
 
         account = original_deposit.account
 
