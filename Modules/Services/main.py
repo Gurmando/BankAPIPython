@@ -145,75 +145,148 @@ class Account:
         return jsonify({"message": "Account deleted successfully"}), 200
 
 
-# Route to get all accounts
 
+
+
+class Bill:
+        def __init__(self, bill_id, type, status, payee, nickname, creation_date, payment_date, recurring_date,
+                     upcoming_payment_date, payment_amount):
+            self.id = bill_id
+            self.type = type
+            self.status = status
+            self.payee = payee
+            self.nickname = nickname
+            self.creation_date = creation_date
+            self.payment_date = payment_date
+            self.recurring_date = recurring_date
+            self.upcoming_payment_date = upcoming_payment_date
+            self.payment_amount = payment_amount
+
+        @classmethod
+        def from_dict(cls, data):
+            return cls(
+                data["id"],
+                data["type"],
+                data["status"],
+                data["payee"],
+                data["nickname"],
+                data["creation_date"],
+                data["payment_date"],
+                data["recurring_date"],
+                data["upcoming_payment_date"],
+                data["payment_amount"]
+            )
 
 bills_data = []
 
 
 @app.route('/bills', methods=['GET'])
 def get_all_bills():
-    return jsonify(bills_data)
+        conn = get_mysql_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM bills")
+        bills_data = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return jsonify(bills_data)
 
 
 @app.route('/bills/<int:bill_id>', methods=['GET'])
 def get_bill_by_id(bill_id):
-    bill = next((b for b in bills_data if b["id"] == bill_id), None)
-    if bill:
-        return jsonify(bill)
-    else:
-        abort(404)
+        conn = get_mysql_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM bill WHERE id = %s", (bill_id,))
+        bill_data = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        bill = next((b for b in bills_data if b["id"] == bill_id), None)
+        if bill_data:
+            bill = Bill.from_dict(bill_data)
+            return jsonify(bill.__dict__)
+        else:
+            abort(404)
 
 
 @app.route('/accounts/<int:account_id>/bills', methods=['GET'])
 def get_bills_for_account(account_id):
-    account_bills = [b for b in bills_data if b["account"] == account_id]
-    return jsonify(account_bills)
+        conn = get_mysql_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM bills WHERE account = %s", (account_id,))
+        account_bills = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return jsonify(account_bills)
 
 
 @app.route('/accounts/<int:account_id>/bills', methods=['POST'])
 def create_bill_for_account(account_id):
-    data = request.get_json()
+        data = request.get_json()
 
-    # Create a new bill using the data from the request body
-    bill = {
-        "id": len(bills_data) + 1,
-        "type": "Bill",
-        "status": data.get("status"),
-        "payee": data.get("payee"),
-        "nickname": data.get("nickname"),
-        "creation_date": data.get("creation_date"),
-        "payment_date": data.get("payment_date"),
-        "recurring_date": data.get("recurring_date"),
-        "upcoming_payment_date": data.get("upcoming_payment_date"),
-        "payment_amount": data.get("payment_amount"),
-        "account": account_id
-    }
+        # Create a new bill using the data from the request body
+        bill = {
+            "type": "Bill",
+            "status": data.get("status"),
+            "payee": data.get("payee"),
+            "nickname": data.get("nickname"),
+            "creation_date": data.get("creation_date"),
+            "payment_date": data.get("payment_date"),
+            "recurring_date": data.get("recurring_date"),
+            "upcoming_payment_date": data.get("upcoming_payment_date"),
+            "payment_amount": data.get("payment_amount"),
+            "account": account_id
+        }
 
-    bills_data.append(bill)
-    return jsonify(bill), 201
+        conn = get_mysql_connection()
+        cursor = conn.cursor()
+
+        cursor.execute(
+            "INSERT INTO bills (type, status, payee, nickname, creation_date, payment_date, recurring_date, upcoming_payment_date, payment_amount, account) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+            (bill['type'], bill['status'], bill['payee'], bill['nickname'], bill['creation_date'], bill['payment_date'],
+             bill['recurring_date'], bill['upcoming_payment_date'], bill['payment_amount'], bill['account'])
+        )
+        conn.commit()
+
+        bill['id'] = cursor.lastrowid
+
+        cursor.close()
+        conn.close()
+
+        return jsonify(bill), 201
 
 
 @app.route('/bills/<int:bill_id>', methods=['PUT'])
 def update_bill(bill_id):
-    data = request.get_json()
-    bill = next((b for b in bills_data if b["id"] == bill_id), None)
-    if bill:
-        bill.update({
-            "status": data.get("status"),
-            "payee": data.get("payee"),
-            "payment_amount": data.get("payment_amount")
-        })
-        return jsonify({"message": "Bill updated successfully"})
-    else:
-        abort(404)
+        data = request.get_json()
+        conn = get_mysql_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM bills WHERE id = %s", (bill_id,))
+        bill = cursor.fetchone()
 
+        if bill:
+            bill.update({
+                "status": data.get("status"),
+                "payee": data.get("payee"),
+                "payment_amount": data.get("payment_amount")
+            })
+            cursor.execute(
+                "UPDATE bills SET status = %s, payee = %s, payment_amount = %s WHERE id = %s",
+                (bill['status'], bill['payee'], bill['payment_amount'], bill_id)
+            )
+            conn.commit()
+
+            cursor.close()
+            conn.close()
+            return jsonify({"message": "Bill updated successfully"})
 
 @app.route('/bills/<int:bill_id>', methods=['DELETE'])
 def delete_bill(bill_id):
-    global bills_data
-    bills_data = [b for b in bills_data if b["id"] != bill_id]
-    return jsonify({"message": "Bill deleted successfully"})
+            conn = get_mysql_connection()
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM bills WHERE id = %s", (bill_id,))
+            conn.commit()
+            cursor.close()
+            conn.close()
+            return jsonify({"message": "Bill deleted successfully"})
 
 
 class Deposit:
