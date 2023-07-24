@@ -78,7 +78,7 @@ class Deposit(Base):
             'type': self.type,
             'transaction_date': self.transaction_date,
             'status': self.status,
-            'payee_id': self.payee_id,
+             'payee_id': self.payee_id,
             'medium': self.medium,
             'amount': self.amount,
             'description': self.description,
