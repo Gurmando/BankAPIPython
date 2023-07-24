@@ -1,13 +1,10 @@
 
-
 from flask import Flask, jsonify, request
 from flask_mysqldb import MySQL
-from flask_restful import reqparse
 from sqlalchemy import create_engine, Column, Integer, String, Float, ForeignKey, Enum
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.orm import declarative_base
 
-from Modules.Exceptions import ResourceNotFoundException
 
 app = Flask(__name__)
 app.config['MYSQL_HOST'] = 'localhost'
@@ -91,4 +88,3 @@ class Deposit:
 if __name__ == "__main__":
     Base.metadata.create_all(engine)
     app.run(host='localhost', port=5000)
-
