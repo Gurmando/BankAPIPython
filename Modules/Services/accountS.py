@@ -99,7 +99,7 @@ def get_all_bills():
     return jsonify(bills_data)
 
 
-@app.route('/bills/<int:bill_id>', methods=['GET'])
+@app.route('/billsmer/<int:bill_id>', methods=['GET'])
 def get_bill_by_id(bill_id):
     bill = next((b for b in bills_data if b["id"] == bill_id), None)
     if bill:
