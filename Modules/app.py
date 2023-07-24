@@ -1,4 +1,5 @@
 
+
 from flask import Flask, jsonify, request
 from flask_mysqldb import MySQL
 from sqlalchemy import create_engine, Column, Integer, String, Float, ForeignKey
@@ -9,7 +10,7 @@ app = Flask(__name__)
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_PORT'] = 3306
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'Gman1234!'
+app.config['MYSQL_PASSWORD'] = 'DarusJSlah98'
 app.config['MYSQL_DB'] = 'PythonBank'
 
 mysql = MySQL(app)
