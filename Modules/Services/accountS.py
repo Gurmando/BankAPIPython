@@ -85,6 +85,7 @@ def update_account(account_id):
 # Route to delete an existing account
 @app.route('/accounts/<int:account_id>', methods=['DELETE'])
 def delete_account(account_id):
+
     global accounts_data
     accounts_data = [acc for acc in accounts_data if acc["id"] != account_id]
     return jsonify({"message": "Account deleted successfully"})
